@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulador de Empréstimo PRO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-dark">
+
+    <div id="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <span>Simulador PRO</span>
+            </div>
+            <div class="controls-area">
+                <button class="icon-btn" id="theme-toggle" title="Alternar Tema">☀️</button>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Etapa 1: Faixa de Valor -->
+            <div id="etapa1" class="etapa ativa">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>1. Escolha a Faixa de Valor</h2>
+                        <p>Selecione a faixa que corresponde ao valor que você precisa.</p>
+                    </div>
+                    <div class="card-body">
+                         <form id="form-faixa-preco">
+                            <details open>
+                                <summary>▼ R$ 10,00 a R$ 2.000,00</summary>
+                                <div class="faixa-opcao">
+                                    <label><input type="radio" name="faixa_valor" value="250" data-limite="499.99"> R$ 10,00 á 499,99</label>
+                                    <label><input type="radio" name="faixa_valor" value="500" data-limite="999.99"> R$ 500,00 á 999,99</label>
+                                    <label><input type="radio" name="faixa_valor" value="1000" data-limite="1499.99"> R$ 1.000,00 á 1.499,99</label>
+                                    <label><input type="radio" name="faixa_valor" value="1500" data-limite="1999.99"> R$ 1.500,00 á 1.999,99</label>
+                                </div>
+                            </details>
+                            <details>
+                                 <summary>▼ R$ 2.000,00 a R$ 5.000,00</summary>
+                                 <div class="faixa-opcao">
+                                     <label><input type="radio" name="faixa_valor" value="2000" data-limite="3499.99"> R$ 2.000,00 á 3.499,99</label>
+                                     <label><input type="radio" name="faixa_valor" value="3500" data-limite="4999.99"> R$ 3.500,00 á 4.999,99</label>
+                                 </div>
+                             </details>
+                            <details>
+                                <summary>▼ Acima de R$ 5.000,00</summary>
+                                <div class="faixa-opcao">
+                                    <label><input type="radio" name="faixa_valor" value="5000" data-limite="999999"> A partir de R$ 5.000,00</label>
+                                </div>
+                            </details>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 2: Dados do Cliente e Valor -->
+            <div id="etapa2" class="etapa">
+                 <div class="card">
+                    <div class="card-header">
+                        <h2>2. Seus Dados e Valor Exato</h2>
+                        <p>Preencha seus dados e ajuste o valor se necessário.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div><label for="nome-completo-cliente">Nome Completo:</label><input type="text" id="nome-completo-cliente" required></div>
+                            <div><label for="cpf-cliente">CPF:</label><input type="text" id="cpf-cliente" required placeholder="000.000.000-00" maxlength="14"></div>
+                        </div>
+                        <div class="input-group">
+                            <label>Valor Desejado (R$): <span id="limite-valor-info" class="info-text"></span></label>
+                            <div id="valor-display" tabindex="0" title="Clique para editar">R$ 0,00</div>
+                        </div>
+                        <div class="grid-buttons preset-buttons">
+                            <button type="button" class="btn-preset" data-action="add" data-value="50">+50</button>
+                            <button type="button" class="btn-preset" data-action="add" data-value="100">+100</button>
+                            <button type="button" class="btn-preset" data-action="add" data-value="200">+200</button>
+                            <button type="button" class="btn-preset" data-action="add" data-value="500">+500</button>
+                            <button type="button" class="btn-preset" data-action="multiply" data-value="2">x2</button>
+                            <button type="button" class="btn-preset clear" data-action="clear">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 3: Opções de Pagamento -->
+            <div id="etapa3" class="etapa">
+                <div class="card">
+                   <div class="card-header">
+                       <h2>3. Escolha a Forma de Pagamento</h2>
+                       <p>Selecione a opção que melhor se adapta a você.</p>
+                   </div>
+                   <div class="card-body">
+                       <div id="payment-options-container">
+                           <div class="payment-column">
+                               <h3 class="parcelado-title">Parcelado Mensal</h3>
+                               <div class="opcoes-container" id="container-parcelado"></div>
+                           </div>
+                           <div class="payment-column">
+                               <h3 class="diario-title">Quitação Diária</h3>
+                               <div class="opcoes-container" id="container-diario"></div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+            <!-- Etapa 4: Resumo e Contrato -->
+            <div id="etapa4" class="etapa">
+                 <div class="card">
+                    <div class="card-header">
+                        <h2>4. Resumo e Contrato</h2>
+                         <p>Confira os detalhes e confirme para finalizar.</p>
+                    </div>
+                    <div class="card-body">
+                       <div id="resumo-container"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div id="contrato-area">
+                            <h4 class="contrato-title">Termos e Condições do Empréstimo</h4>
+                            <div id="contrato-texto"></div>
+                            <div class="aceite-container">
+                                <input type="checkbox" id="aceito-contrato">
+                                <label for="aceito-contrato">Li e concordo com os termos do contrato.</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer id="footer-nav" class="etapa-footer">
+            <button id="btn-voltar" class="btn btn-secondary">← Voltar</button>
+            <span id="etapa-indicator" class="etapa-indicator">ETAPA 1 DE 4</span>
+            <button id="btn-avancar" class="btn btn-primary" disabled>Avançar →</button>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
