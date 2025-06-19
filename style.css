@@ -1,0 +1,158 @@
+/* --- Reset Básico e Variáveis Globais --- */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+    --bg-color: #11131e;
+    --container-bg: #1a1f2b;
+    --card-bg: #232a3b;
+    --header-bg: #1e2433;
+    --text-color: #e1e7ff;
+    --text-muted: #8a94b8;
+    --primary-color: #6c7dff;
+    --primary-hover: #899bff;
+    --success-color: #45d493;
+    --warning-color: #ffca3a;
+    --danger-color: #ff6b6b;
+    --border-color: #2f3753;
+    --input-bg: #2d344c;
+    --input-border: #404866;
+    --input-focus-border: var(--primary-color);
+    --input-focus-shadow: rgba(108, 125, 255, 0.2);
+    --select-color-impar: #ffe066; /* Amarelo Claro */
+    --select-color-par: #7cc6fe; /* Azul Céu */
+    --rgb-warning: 255, 202, 58;
+}
+
+html, body { height: 100%; font-family: "Inter", sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+body { display: flex; justify-content: center; align-items: center; padding: 0; }
+#app-container { width: 100%; height: 100%; max-width: 800px; margin: 0 auto; background-color: var(--container-bg); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.3); }
+.app-header { height: 55px; padding: 0 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.logo-area span { font-weight: 700; font-size: 1.2rem; color: var(--primary-color); }
+.progress-bar { display: none; }
+.controls-area { display: flex; gap: 5px; }
+.icon-btn { background: none; border: none; color: #949eb5; padding: 4px; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+.icon-btn:hover { background-color: rgba(255, 255, 255, 0.08); color: #fff; }
+.container { flex-grow: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.etapa-content { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; /* Espaço para o footer */ }
+.etapa { display: none; padding: 15px; animation: fadeIn 0.3s; }
+.etapa.ativa { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.card { background-color: var(--card-bg); border-radius: 6px; border: 1px solid var(--border-color); }
+.card-header { padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-size: 1.1rem; font-weight: 600; }
+.card-body { padding: 15px; }
+
+/* Formulários */
+.input-group, .form-row { margin-bottom: 1.2rem; }
+.form-row { display: flex; flex-direction: column; gap: 1.2rem; }
+@media(min-width: 600px) { .form-row { flex-direction: row; gap: 1rem; } }
+.form-row > div { flex: 1; }
+label { font-size: 0.85rem; display: block; margin-bottom: 5px; color: var(--text-muted); }
+input[type=text], input[type=email], input[type=date], input[type=number] { display: block; width: 100%; font-size: 0.9rem; padding: 10px; border-radius: 5px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--text-color); }
+input:focus { border-color: var(--input-focus-border); box-shadow: 0 0 0 3px var(--input-focus-shadow); outline: none; }
+.validation-message { display: block; font-size: 0.8rem; margin-top: 5px; min-height: 1.2em; color: var(--danger-color); font-weight: 500;}
+.info-box { padding: 12px; margin-bottom: 1rem; font-size: 0.9rem; border-radius: 5px; border: 1px solid; }
+.info-box.warning-message { border-color: rgba(var(--rgb-warning), 0.3); color: var(--warning-color); background-color: rgba(var(--rgb-warning), 0.05);}
+
+.btn { padding: 10px 18px; border-radius: 5px; font-size: 0.95rem; font-weight: 500; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background-color: var(--primary-color); color: #fff; }
+.btn-secondary { background-color: #5a6689; color: #fff; }
+.btn-success { background-color: var(--success-color); color: #fff; }
+.btn-outline-secondary { background: transparent; color: var(--text-muted); border-color: var(--input-border); }
+.btn-outline-danger { background: transparent; color: var(--danger-color); border-color: var(--danger-color); }
+.btn-whatsapp { background-color: #25D366; color: white; border-color: #1DA851; }
+.btn-sm { font-size: 0.85rem; padding: 6px 12px; }
+
+/* Rodapé Fixo de Navegação */
+.etapa-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background-color: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; z-index: 10; }
+
+/* Etapa 1 */
+#etapa1 details { border: 1px solid var(--border-color); border-radius: 5px; margin-bottom: 8px; }
+#etapa1 summary { padding: 12px; font-weight: 600; cursor: pointer; }
+#etapa1 .faixa-opcao { padding: 0 12px 12px; }
+#etapa1 .faixa-opcao label { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 10px; border: 1px solid var(--input-border); border-radius: 4px; cursor: pointer; }
+#etapa1 .faixa-opcao label:has(input:checked) { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+
+/* Etapa 2 */
+#valor-display { font-size: 2rem; font-weight: 700; color: var(--primary-color); padding: 10px; background-color: var(--input-bg); border-radius: 5px; text-align: center; cursor: pointer; margin-bottom: 1rem; }
+.actions-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (min-width: 600px) { .actions-grid { grid-template-columns: 1fr 1fr; } }
+.preset-buttons, .dias-pagamento-botoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-preset { flex-grow: 1; }
+.btn-dia { background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-muted); cursor: pointer; padding: 8px 12px; border-radius: 5px; flex-grow: 1; }
+.btn-dia.active { background-color: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.info-vencimento-box { text-align: center; text-transform: uppercase; font-weight: 600; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid; }
+.info-vencimento-box span { font-size: 1.8em; font-weight: 700; display: block; }
+.info-vencimento-box.near { color: var(--danger-color); border-color: var(--danger-color); }
+.info-vencimento-box.medium { color: var(--warning-color); border-color: var(--warning-color); }
+.info-vencimento-box.far { color: var(--success-color); border-color: var(--success-color); }
+
+/* Etapa 3 */
+.payment-type-selector { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.btn-payment-type { flex: 1; padding: 12px; font-size: 1rem; font-weight: 600; border: 2px solid var(--border-color); background-color: var(--input-bg); color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.btn-payment-type.active#btn-show-parcelado { background-color: var(--success-color); border-color: var(--success-color); color: #fff; }
+.btn-payment-type.active#btn-show-diario { background-color: var(--warning-color); border-color: var(--warning-color); color: #1f1f1f; }
+
+.opcoes-container-mensal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.coluna-pagamento { display: flex; flex-direction: column; gap: 10px; }
+.opcoes-container-diario { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+
+.opcao-resultado { padding: 15px; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.opcao-resultado:hover { border-color: var(--primary-hover); }
+.opcao-resultado.selected.impar { border-color: var(--select-color-impar); background-color: var(--select-color-impar); color: #333; }
+.opcao-resultado.selected.par { border-color: var(--select-color-par); background-color: var(--select-color-par); color: #333; }
+.opcoes-container-mensal .dimmed, .opcoes-container-diario .dimmed { opacity: 0.4; }
+.opcao-resultado .titulo { font-weight: 600; font-size: 1.1rem; }
+.opcao-resultado.diario-card .titulo { font-size: 1em; margin-bottom: 4px; color: var(--text-muted); }
+.opcao-resultado.diario-card .data { font-size: 0.85em; }
+.opcao-resultado.diario-card .valor { font-size: 1.2em; font-weight: 700; margin-top: 6px; }
+
+/* Etapa 4 e 5 */
+#resumo-container { border: 1px dashed var(--border-color); padding: 20px; border-radius: 8px; background-color: var(--input-bg);}
+#resumo-container h4 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.2rem; }
+#resumo-container p { font-size: 1.05rem; line-height: 1.7; margin: 8px 0; }
+#resumo-container strong { font-weight: 600; color: var(--text-color); }
+#contrato-texto { font-size: 0.9rem; line-height: 1.7; padding: 20px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--input-bg); color: var(--text-color); }
+#contrato-texto h5 { color: var(--primary-color); margin: 1.5rem 0 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; font-size: 1rem; }
+#contrato-texto strong { font-weight: 600; color: var(--text-color);}
+#contrato-texto i { color: var(--text-muted); }
+#contrato-texto ul { padding-left: 20px; margin: 1rem 0; }
+#contrato-texto li { margin-bottom: 0.5rem; }
+#contrato-aceite { margin-top: 1.5rem; font-size: 1rem; }
+#contrato-aceite label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+#contrato-aceite input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+
+.hidden { display: none !important; }
+
+/* Painel Admin */
+.admin-password-overlay, .admin-settings-panel { display: none; } /* Simplificado para o exemplo */
+.admin-password-overlay.hidden, .admin-settings-panel.hidden { display: none !important; }
+
+/* Tema Claro */
+body.theme-light {
+    --bg-color: #f0f2f5; --container-bg: #ffffff; --card-bg: #fdfdfd;
+    --text-color: #1f1f1f; --text-muted: #595959;
+    --border-color: #e8e8e8; --input-bg: #f5f5f5;
+    --rgb-warning: 255, 179, 0;
+    --light-select-bg: #262626;
+    --light-select-text: #ffffff;
+}
+body.theme-light .info-box.warning-message { color: #855d00; background-color: #fffbe6; border-color: #ffe58f; }
+body.theme-light #resumo-container, body.theme-light #contrato-texto { color: #262626; background-color: #f9f9f9; }
+body.theme-light #resumo-container strong, body.theme-light #contrato-texto strong { color: #000; }
+body.theme-light #contrato-texto h5 { color: #1890ff; }
+body.theme-light .btn-payment-type.active#btn-show-diario { color: #1f1f1f; }
+
+/* Inversão de cores para seleção no tema claro */
+body.theme-light #etapa1 .faixa-opcao label:has(input:checked),
+body.theme-light .btn-dia.active {
+    background-color: var(--light-select-bg);
+    border-color: var(--light-select-bg);
+    color: var(--light-select-text);
+}
+body.theme-light .opcao-resultado.selected.impar,
+body.theme-light .opcao-resultado.selected.par {
+    background-color: var(--light-select-bg);
+    border-color: var(--light-select-bg);
+    color: var(--light-select-text);
+}
