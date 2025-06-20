@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ========================================================
-    // JavaScript Simulador de Empréstimo PRO (V12 - FINAL)
+    // JavaScript Simulador de Empréstimo PRO (V13 - Taxas Dinâmicas)
     // ========================================================
 
     let CONFIG = {
@@ -10,8 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
         credorContatoEmail: 'encomendapalotina@gmail.com',
         contratoCidade: 'Palotina',
         contratoEstado: 'PR',
-        taxaMensalParcelado_3x: 0.17,
-        taxaMensalParcelado_48x: 0.10,
+        // --- ALTERAÇÃO INICIADA: Estrutura de taxas por faixa de valor ---
+        taxasPorFaixa: {
+            baixo: { // Até R$ 1.999,99
+                taxa3x: 0.17,  // 17%
+                taxa48x: 0.10  // 10%
+            },
+            intermediario: { // De R$ 2.000,00 a R$ 4.999,99
+                taxa3x: 0.15,  // 15%
+                taxa48x: 0.08  // 8%
+            },
+            alto: { // A partir de R$ 5.000,00
+                taxa3x: 0.13,  // 13%
+                taxa48x: 0.06  // 6%
+            }
+        },
+        // --- ALTERAÇÃO FINALIZADA ---
         taxaDiarioPrimeiroDia: 0.35,
         taxaDiarioUltimoDia: 1.00,
         adminCodigoAcesso: '68366836'
@@ -129,6 +143,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // --- ALTERAÇÃO INICIADA: Nova função para obter taxas corretas ---
+    function getTaxasAtuais() {
+        const valor = estado.dadosCalculadora.valorSolicitado;
+        if (valor < 2000) {
+            return CONFIG.taxasPorFaixa.baixo;
+        } else if (valor < 5000) {
+            return CONFIG.taxasPorFaixa.intermediario;
+        } else {
+            return CONFIG.taxasPorFaixa.alto;
+        }
+    }
+    // --- ALTERAÇÃO FINALIZADA ---
+
     function calcularParcelado() {
         const colunaImpar = getElem('coluna-impar');
         const colunaPar = getElem('coluna-par');
@@ -137,8 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { valorSolicitado, dataPrimeiroVencimento } = estado.dadosCalculadora;
         estado.resultados.parcelado = [];
-        const taxaMenorPrazo = CONFIG.taxaMensalParcelado_3x;
-        const taxaMaiorPrazo = CONFIG.taxaMensalParcelado_48x;
+        
+        // --- ALTERAÇÃO INICIADA: Usando a função para obter taxas dinâmicas ---
+        const taxasAtuais = getTaxasAtuais();
+        const taxaMenorPrazo = taxasAtuais.taxa3x;
+        const taxaMaiorPrazo = taxasAtuais.taxa48x;
+        // --- ALTERAÇÃO FINALIZADA ---
         
         for (let p = 3; p <= 48; p += 3) {
             const fator = (p - 3) / (48 - 3); 
@@ -225,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function configurarEtapa5() {
-        // Lógica de preenchimento do contrato (sem alterações)
         const op = estado.resultados.opcaoSelecionada;
         if (!op) return;
         let template = getElem('contrato-template').innerHTML;
@@ -259,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function compartilharWhatsApp() {
-        // Lógica de compartilhamento (sem alterações)
         const { dadosCalculadora: d, resultados: { opcaoSelecionada: o } } = estado;
         if (!o) return;
         let shareText = `*📄 Resumo da Simulação de Empréstimo*\n\n` +
@@ -327,7 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
         getElem('btn-show-parcelado').addEventListener('click', () => configurarEtapa3('parcelado'));
         getElem('btn-show-diario').addEventListener('click', () => configurarEtapa3('diario'));
 
-        // Adiciona o listener de clique ao pai dos containers
         document.getElementById('etapa3').addEventListener('click', e => {
             const opcaoElemento = e.target.closest('.opcao-resultado');
             if (opcaoElemento && opcaoElemento.dataset.id) {
