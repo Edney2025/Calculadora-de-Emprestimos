@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  `Aguardamos a análise inicial em até 24 horas e a aprovação final entre 05 e 30 dias, conforme o valor informado.\n\n` +
                  `Atenciosamente,\n${d.nomeCompletoCliente}`;
         const mensagemAlerta = `Sua solicitação foi recebida com sucesso!\n\n` +
-                              `Atenção: A primeira etapa de avaliação ocorrerá em até 24 horas.\n` +
+                              `A primeira etapa de avaliação ocorrerá em até 24 horas.\n` +
                               `O prazo para a aprovação final e liberação do valor é de 05 a 30 dias, a depender do montante solicitado e da análise de crédito. Este período é necessário para realizarmos todas as verificações.\n\n` +
                               `Clique em "OK" para continuar e nos enviar sua solicitação via WhatsApp.`;
         mostrarAlerta('Atenção: Prazos de Análise', mensagemAlerta, () => {
