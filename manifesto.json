@@ -1,0 +1,21 @@
+{
+    "name": "Simulador de Empréstimo PRO",
+    "short_name": "Simulador PRO",
+    "description": "Simulador de Empréstimo PRO com cálculo unificado e faixas de preço.",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#f4f7fb",
+    "theme_color": "#1a73e8",
+    "icons": [
+        {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
