@@ -2,167 +2,180 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Simulador de Empréstimo PRO com visual profissional">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Simulador de Empréstimo PRO com cálculo unificado e faixas de preço.">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Simulador de Empréstimo PRO</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
 </head>
 <body>
     <div id="app-container">
         <header class="app-header">
-            <div class="logo-area"><span>Simulador PRO</span></div>
+            <div class="logo-area" id="logo-area" title="Simulador PRO"><span>Simulador PRO</span></div>
             <div class="progress-bar">
                 <div class="progress-step active" data-step="1"><div class="step-icon">1</div><div class="step-label">Faixa</div></div>
                 <div class="progress-line"></div>
-                <div class="progress-step" data-step="2"><div class="step-icon">2</div><div class="step-label">Dados</div></div>
+                <div class="progress-step" data-step="2"><div class="step-icon">2</div><div class="step-label">Dados & Valor</div></div>
                 <div class="progress-line"></div>
-                <div class="progress-step" data-step="3"><div class="step-icon">3</div><div class="step-label">Pagamento</div></div>
-                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3"><div class="step-icon">3</div><div class="step-label">Parcelas</div></div>
+                <新华社 group="progress-line"></div>
                 <div class="progress-step" data-step="4"><div class="step-icon">4</div><div class="step-label">Resumo</div></div>
                 <div class="progress-line"></div>
                 <div class="progress-step" data-step="5"><div class="step-icon">5</div><div class="step-label">Contrato</div></div>
             </div>
             <div class="controls-area">
-                <button class="icon-btn" title="Configurações (Admin)" id="admin-open-password-prompt-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path d="M10 3.75a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM10 8.75a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM10 17.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
-                </button>
-                <button class="icon-btn" id="theme-toggle" title="Alternar Tema">☀️</button>
+                <button class="btn hidden" id="prev-settings-btn" title="Configurações">⚙️</button>
+                <button class="btn" id="theme-toggle-btn" title="Alternar Tema">🌙</button>
             </div>
         </header>
 
         <main class="container">
+            <!-- Pop-up Alerta -->
+            <div id="alert-overlay" class="overlay hidden">
+                <div class="alert-box">
+                    <h2 id="alert-title"></h2>
+                    <p id="alert-message"></p>
+                    <button id="alert-ok-btn" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+
+            <!-- Painel Admin e Senha -->
             <div id="admin-password-overlay" class="admin-password-overlay hidden">
                 <div class="password-box">
                     <h4>Acesso Administrador</h4>
                     <label for="admin-password-input">Senha:</label>
-                    <input type="password" id="admin-password-input" inputmode="text" aria-describedby="admin-password-error">
+                    <input type="password" id="admin-password-input" autocomplete="current-password">
                     <span class="validation-message error-message" id="admin-password-error"></span>
-                    <div class="password-actions">
-                        <button id="admin-cancel-btn" class="btn btn-secondary btn-sm">Cancelar</button>
-                        <button id="admin-login-btn" class="btn btn-primary btn-sm">Entrar</button>
+                    <div class="admin-actions">
+                        <button id="admin-cancel-btn" class="btn btn-secondary">Cancelar</button>
+                        <button id="admin-login-btn" class="btn btn-primary">Entrar</button>
                     </div>
                 </div>
             </div>
-            <div id="admin-settings" class="admin-settings-panel hidden">
+            <div id="admin-settings" class="admin-settings-panel">
                 <div class="admin-header">
                     <h3>Configurações</h3>
-                    <button id="admin-close-panel-btn" class="icon-btn close-btn" title="Fechar">X</button>
+                    <button id="admin-close-panel-btn" class="btn close-btn" title="Fechar">×</button>
                 </div>
                 <div class="settings-form">
                     <h4>Dados do Credor</h4>
                     <div class="form-grid">
                         <div><label for="admin_credor_nome">Nome Completo:</label><input type="text" id="admin_credor_nome"></div>
                         <div><label for="admin_credor_cpf_cnpj">CPF/CNPJ:</label><input type="text" id="admin_credor_cpf_cnpj"></div>
-                        <div><label for="admin_credor_contato_tel">Telefone:</label><input type="text" id="admin_credor_contato_tel"></div>
-                        <div><label for="admin_credor_contato_email">E-mail:</label><input type="email" id="admin_credor_contato_email"></div>
+                        <div><label for="admin_credor_contato_tel">Telefone (com DDI):</label><input type="text" id="admin_credor_contato_tel" placeholder="5544998408460"></div>
                         <div><label for="admin_contrato_cidade">Cidade Contrato:</label><input type="text" id="admin_contrato_cidade"></div>
                         <div><label for="admin_contrato_estado">Estado (UF):</label><input type="text" id="admin_contrato_estado"></div>
                     </div>
-                    <h4>Taxas Mensais (%)</h4>
+                    <h4>Parâmetros Financeiros</h4>
                     <div class="form-grid">
-                        <div><label for="admin_taxa_baixo_3x">Baixo (3x):</label><input type="number" step="0.01" id="admin_taxa_baixo_3x"></div>
-                        <div><label for="admin_taxa_baixo_48x">Baixo (48x):</label><input type="number" step="0.01" id="admin_taxa_baixo_48x"></div>
-                        <div><label for="admin_taxa_intermediario_3x">Intermediário (3x):</label><input type="number" step="0.01" id="admin_taxa_intermediario_3x"></div>
-                        <div><label for="admin_taxa_intermediario_48x">Intermediário (48x):</label><input type="number" step="0.01" id="admin_taxa_intermediario_48x"></div>
-                        <div><label for="admin_taxa_alto_3x">Alto (3x):</label><input type="number" step="0.01" id="admin_taxa_alto_3x"></div>
-                        <div><label for="admin_taxa_alto_48x">Alto (48x):</label><input type="number" step="0.01" id="admin_taxa_alto_48x"></div>
-                    </div>
-                    <h4>Taxas Diárias (%)</h4>
-                    <div class="form-grid">
-                        <div><label for="admin_taxa_diario_ini">Dia 1:</label><input type="number" step="0.01" id="admin_taxa_diario_ini"></div>
-                        <div><label for="admin_taxa_diario_fim">Último dia:</label><input type="number" step="0.01" id="admin_taxa_diario_fim"></div>
+                        <div><label for="admin_taxa_juros_inicial">Taxa de Juros Inicial (3x, % a.m.):</label><input type="number" step="0.01" id="admin_taxa_juros_inicial"></div>
+                        <div><label for="admin_taxa_juros_final">Taxa de Juros Final (36x, % a.m.):</label><input type="number" step="0.01" id="admin_taxa_juros_final"></div>
+                        <div><label for="admin_iof_fixo">IOF Fixo (%):</label><input type="number" step="0.01" id="admin_iof_fixo"></div>
+                        <div><label for="admin_iof_diario">IOF Diário (%):</label><input type="number" step="0.0001" id="admin_iof_diario"></div>
                     </div>
                 </div>
                 <div class="admin-actions">
-                    <button id="admin-cancel-settings-btn" class="btn btn-secondary btn-sm">Cancelar</button>
-                    <button id="admin-save-settings-btn" class="btn btn-success btn-sm">Salvar</button>
+                    <button id="admin-save-settings-btn" class="btn btn-primary">Salvar e Fechar</button>
                 </div>
             </div>
 
+            <!-- Etapas do Fluxo -->
             <div class="etapa-content">
                 <div id="etapa1" class="etapa ativa">
                     <div class="card">
-                        <h2 class="card-header">1. Faixa de Valor do Empréstimo</h2>
+                        <h2 class="card-header">1. Selecione a faixa desejada</h2>
                         <div class="card-body">
-                            <div class="info-box">📌 Escolha a faixa de valor que você precisa.</div>
                             <form id="form-faixa-preco">
-                                <details open><summary>▼ Valores Baixos</summary><div class="faixa-opcao">
-                                    <label><input type="radio" name="faixa_valor" value="50" data-limite="499.99"> Até R$ 499,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="500" data-limite="999.99"> R$ 500,00 a R$ 999,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="1000" data-limite="1499.99"> R$ 1.000,00 a R$ 1.499,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="1500" data-limite="1999.99"> R$ 1.500,00 a R$ 1.999,99</label>
-                                </div></details>
-                                <details><summary>▼ Valores Intermediários</summary><div class="faixa-opcao">
-                                    <label><input type="radio" name="faixa_valor" value="2000" data-limite="2499.99"> R$ 2.000,00 a R$ 2.499,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="2500" data-limite="2999.99"> R$ 2.500,00 a R$ 2.999,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="3000" data-limite="3499.99"> R$ 3.000,00 a R$ 3.499,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="3500" data-limite="3999.99"> R$ 3.500,00 a R$ 3.999,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="4000" data-limite="4499.99"> R$ 4.000,00 a R$ 4.499,99</label>
-                                    <label><input type="radio" name="faixa_valor" value="4500" data-limite="4999.99"> R$ 4.500,00 a R$ 4.999,99</label>
-                                </div></details>
-                                <details><summary>▼ Valores Altos</summary><div class="faixa-opcao">
-                                    <label><input type="radio" name="faixa_valor" value="5000" data-limite="999999"> A partir de R$ 5.000,00</label>
-                                </div></details>
+                                <details open>
+                                    <summary>Valores até R$ 2.000</summary>
+                                    <div class="faixa-opcao">
+                                        <label><input type="radio" name="faixa_valor" data-min="10" data-max="499.99"> R$ 10,00 a R$ 499,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="500" data-max="999.99"> R$ 500,00 a R$ 999,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="1000" data-max="1499.99"> R$ 1.000,00 a R$ 1.499,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="1500" data-max="1999.99"> R$ 1.500,00 a R$ 1.999,99</label>
+                                    </div>
+                                </details>
+                                <details>
+                                    <summary>Valores até R$ 5.000</summary>
+                                    <div class="faixa-opcao">
+                                        <label><input type="radio" name="faixa_valor" data-min="2000" data-max="2499.99"> R$ 2.000,00 a R$ 2.499,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="2500" data-max="2999.99"> R$ 2.500,00 a R$ 2.999,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="3000" data-max="3499.99"> R$ 3.000,00 a R$ 3.499,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="3500" data-max="3999.99"> R$ 3.500,00 a R$ 3.999,99</label>
+                                        <label><input type="radio" name="faixa_valor" data-min="4000" data-max="4999.99"> R$ 4.000,00 a R$ 4.999,99</label>
+                                    </div>
+                                </details>
+                                <details>
+                                    <summary>Valores Altos</summary>
+                                    <div class="faixa-opcao">
+                                        <label><input type="radio" name="faixa_valor" data-min="5000" data-max="999999"> Acima de R$ 5.000,00</label>
+                                    </div>
+                                </details>
                             </form>
+                            <span class="validation-message error-message" id="etapa1-validation"></span>
                         </div>
                     </div>
                 </div>
 
                 <div id="etapa2" class="etapa">
                     <div class="card">
-                        <h2 class="card-header">2. Dados Pessoais e Valor</h2>
+                        <h2 class="card-header">2. Seus Dados e Valor Exato</h2>
                         <div class="card-body">
-                            <form id="form-dados-pessoais">
-                                <div class="form-row">
-                                    <div><label for="nome-completo-cliente">Nome Completo:</label><input type="text" id="nome-completo-cliente" required aria-describedby="etapa2-validation"></div>
-                                    <div><label for="cpf-cliente">CPF:</label><input type="text" id="cpf-cliente" required placeholder="000.000.000-00" maxlength="14" aria-describedby="etapa2-validation"></div>
+                            <div class="form-group">
+                                <label for="valor-emprestimo">Valor Exato Desejado</label>
+                                <input type="number" id="valor-emprestimo" placeholder="Ex: 500" required step="0.01" inputmode="decimal">
+                                <small id="limite-valor-info" class="info-text"></small>
+                                <div class="preset-buttons">
+                                    <button type="button" class="preset-btn btn btn-outline-secondary btn-sm" data-action="add" data-value="50">+50</button>
+                                    <button type="button" class="preset-btn btn btn-outline-secondary btn-sm" data-action="add" data-value="100">+100</button>
+                                    <button type="button" class="preset-btn btn btn-outline-secondary btn-sm" data-action="add" data-value="200">+200</button>
+                                    <button type="button" class="preset-btn btn btn-outline-secondary btn-sm" data-action="add" data-value="500">+500</button>
+                                    <button type="button" class="preset-btn multiplier btn btn-outline-secondary btn-sm" data-action="multiply" data-value="2">x2</button>
+                                    <button type="button" class="preset-btn clear btn btn-outline-danger btn-sm" data-action="clear">Limpar</button>
                                 </div>
-                                <div class="input-group">
-                                    <label>Valor Desejado (R$): <span id="limite-valor-info" class="info-text"></span></label>
-                                    <div id="valor-display" tabindex="0" title="Clique para editar">R$ 0,00</div>
-                                    <span class="validation-message" id="valor-validation"></span>
-                                </div>
-                                <div class="actions-grid">
-                                    <div class="preset-buttons">
-                                        <button type="button" class="btn-preset btn btn-outline-secondary btn-sm" data-action="add" data-value="50">+50</button>
-                                        <button type="button" class="btn-preset btn btn-outline-secondary btn-sm" data-action="add" data-value="100">+100</button>
-                                        <button type="button" class="btn-preset btn btn-outline-secondary btn-sm" data-action="add" data-value="200">+200</button>
-                                        <button type="button" class="btn-preset btn btn-outline-secondary btn-sm" data-action="add" data-value="500">+500</button>
-                                        <button type="button" class="btn-preset btn btn-outline-secondary btn-sm" data-action="multiply" data-value="2">x2</button>
-                                        <button type="button" class="btn-preset btn btn-outline-danger btn-sm" data-action="clear">Limpar</button>
-                                    </div>
-                                    <div class="dias-pagamento-botoes">
-                                        <button type="button" class="btn-dia" data-dia="5">05</button>
-                                        <button type="button" class="btn-dia" data-dia="10">10</button>
-                                        <button type="button" class="btn-dia" data-dia="15">15</button>
-                                        <button type="button" class="btn-dia" data-dia="20">20</button>
-                                        <button type="button" class="btn-dia" data-dia="25">25</button>
-                                        <button type="button" class="btn-dia" data-dia="30">30</button>
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="nome-completo-cliente">Nome Completo</label>
+                                <input type="text" id="nome-completo-cliente" required autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpf-cliente">CPF</label>
+                                <input type="text" id="cpf-cliente" required placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+                            </div>
+                            <div class="form-group">
+                                <label for="endereco-cliente">Endereço Completo</label>
+                                <input type="text" id="endereco-cliente" required placeholder="Rua, Número, Bairro, Cidade, Estado, CEP">
+                            </div>
+                            <div class="form-group">
+                                <label>Dia Preferencial para Pagamento</label>
+                                <div class="dias-pagamento-botoes">
+                                    <button type="button" class="btn-dia" data-dia="5">05</button>
+                                    <button type="button" class="btn-dia" data-dia="10">10</button>
+                                    <button type="button" class="btn-dia" data-dia="15">15</button>
+                                    <button type="button" class="btn-dia" data-dia="20">20</button>
+                                    <button type="button" class="btn-dia" data-dia="25">25</button>
+                                    <button type="button" class="btn-dia" data-dia="30">30</button>
                                 </div>
                                 <div id="info-vencimento" class="info-vencimento-box hidden"></div>
-                                <span class="validation-message error-message" id="etapa2-validation"></span>
-                            </form>
+                            </div>
+                            <span class="validation-message error-message" id="etapa2-validation"></span>
                         </div>
                     </div>
                 </div>
 
                 <div id="etapa3" class="etapa">
                     <div class="card">
-                        <h2 class="card-header">3. Opções de Pagamento</h2>
+                        <h2 class="card-header">3. Opções de Parcelamento</h2>
                         <div class="card-body">
-                            <div class="payment-type-selector">
-                                <button id="btn-show-parcelado" class="btn-payment-type active">Mensal Parcelado</button>
-                                <button id="btn-show-diario" class="btn-payment-type">Quitação Diária</button>
-                            </div>
-                            <div id="container-pagamento-mensal" class="opcoes-container-mensal">
-                                <div id="coluna-impar" class="coluna-pagamento"></div>
-                                <div id="coluna-par" class="coluna-pagamento"></div>
-                            </div>
-                            <div id="container-pagamento-diario" class="opcoes-container-diario hidden"></div>
+                            <div id="container-pagamento-mensal" class="opcoes-container-mensal"></div>
                             <span class="validation-message error-message" id="etapa3-validation"></span>
                         </div>
                     </div>
@@ -171,20 +184,20 @@
                 <div id="etapa4" class="etapa">
                     <div class="card">
                         <h2 class="card-header">4. Resumo da Simulação</h2>
-                        <div class="card-body"><div id="resumo-container"><p>Carregando...</p></div></div>
+                        <div class="card-body">
+                            <div id="resumo-container"><p>Selecione uma opção de pagamento para ver o resumo.</p></div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="etapa5" class="etapa">
                     <div class="card">
+                        <h2 class="card-header">5. Contrato de Mútuo</h2>
                         <div class="card-body">
-                            <div class="info-box warning-message" style="margin-bottom: 1.5rem;">
-                                🚨 <b>ATENÇÃO:</b> Leia o contrato atentamente. A confirmação digital tem validade jurídica.
-                            </div>
                             <div id="contrato-area">
                                 <div id="contrato-texto">Carregando termos...</div>
                                 <div id="contrato-aceite">
-                                    <label><input type="checkbox" id="aceito-contrato" aria-describedby="contrato-validation"> Declaro que li, compreendi e aceito integralmente os termos e condições deste contrato.</label>
+                                    <label><input type="checkbox" id="aceito-contrato"> Declaro que li e aceito integralmente os termos e condições apresentados.</label>
                                     <span class="validation-message error-message" id="contrato-validation"></span>
                                 </div>
                             </div>
@@ -192,55 +205,76 @@
                     </div>
                 </div>
             </div>
-        </main>
 
-        <footer class="etapa-footer">
-            <button id="btn-reiniciar" class="btn btn-secondary">↻ Reiniciar</button>
-            <button id="btn-voltar" class="btn btn-secondary">← Voltar</button>
-            <button id="btn-avancar" class="btn btn-primary" disabled>Avançar →</button>
-            <button id="btn-finalizar-whatsapp" class="btn btn-whatsapp hidden">✓ Finalizar e Enviar via WhatsApp</button>
-        </footer>
+            <footer class="etapa-footer">
+                <button id="btn-reiniciar" class="btn btn-secondary">↻ Reiniciar</button>
+                <div>
+                    <button id="btn-voltar" class="btn btn-secondary hidden">← Voltar</button>
+                    <button id="btn-avancar" class="btn btn-primary" disabled>Avançar →</button>
+                    <button id="btn-finalizar-whatsapp" class="btn btn-whatsapp hidden">✓ Finalizar e Enviar via WhatsApp</button>
+                </div>
+            </footer>
+        </main>
     </div>
 
+    <!-- Template do Contrato -->
     <template id="contrato-template">
-        <h4>CONTRATO DE MÚTUO FINANCEIRO COM GARANTIA DE NOTA PROMISSÓRIA</h4>
-        <h5>CLÁUSULA 1ª - AS PARTES</h5>
-        <p><strong>CREDOR:</strong> [NOME_COMPLETO_DO_CREDOR], devidamente inscrito(a) no CPF/CNPJ sob o nº [CPF_CNPJ_DO_CREDOR], com sede em [CIDADE_CONTRATO]/[ESTADO_CONTRATO], doravante denominado simplesmente CREDOR.</p>
-        <p><strong>DEVEDOR:</strong> [NOME_CLIENTE_COMPLETO], devidamente inscrito(a) no CPF sob o nº [CPF_CLIENTE], doravante denominado(a) simplesmente DEVEDOR(A).</p>
-        <h5>CLÁUSULA 2ª - O OBJETO</h5>
-        <p><strong>2.1.</strong> O presente contrato tem por objeto a concessão de um empréstimo (mútuo financeiro) do CREDOR para o(a) DEVEDOR(A), no valor de <strong>[VALOR_SOLICITADO_FORMATADO]</strong> (Valor Principal), quantia esta entregue e recebida pelo(a) DEVEDOR(A) na data da celebração deste instrumento, servindo o aceite digital como recibo de quitação.</p>
-        <h5>CLÁUSULA 3ª - PAGAMENTO E CONDIÇÕES</h5>
-        <p><strong>3.1.</strong> O(A) DEVEDOR(A) se compromete a restituir o Valor Principal, acrescido dos encargos financeiros (juros remuneratórios), resultando no Custo Efetivo Total (CET) de <strong>[VALOR_TOTAL_PAGO_FORMATADO]</strong>, conforme a modalidade selecionada:</p>
-        <div id="contrato-parcelado-detalhe">
-            <p><strong>MODALIDADE MENSAL:</strong> Pagamento em <strong>[NUMERO_PARCELAS] parcelas mensais, iguais e sucessivas</strong> no valor de <strong>[VALOR_PARCELA_FORMATADO]</strong> cada. O vencimento da primeira parcela será em <strong>[DATA_PRIMEIRO_VENCIMENTO_PARCELADO]</strong>, e as demais em igual dia dos meses subsequentes.</p>
-        </div>
-        <div id="contrato-diario-detalhe">
-            <p><strong>MODALIDADE DIÁRIA:</strong> Pagamento do valor total em uma <strong>única parcela</strong>, que deverá ser quitada impreterivelmente até a data limite de <strong>[DATA_LIMITE_PAGAMENTO_DIARIO]</strong>.</p>
-        </div>
-        <p><strong>3.2.</strong> Os pagamentos deverão ser efetuados por meio de PIX para a chave indicada pelo CREDOR ou por outro meio previamente e formalmente acordado entre as partes.</p>
-        <h5>CLÁUSULA 4ª - INADIMPLÊNCIA E ENCARGOS MORATÓRIOS</h5>
-        <p><strong>4.1.</strong> O não pagamento de qualquer parcela na data de seu respectivo vencimento configurará a mora do(a) DEVEDOR(A), independentemente de qualquer aviso ou notificação, sujeitando-o(a) ao pagamento dos seguintes encargos:</p>
-        <ul>
-            <li><strong>(a) Multa Moratória:</strong> Percentual fixo de <strong>20% (vinte por cento)</strong> sobre o valor da obrigação em atraso.</li>
-            <li><strong>(b) Juros de Mora:</strong> Taxa de <strong>10% (dez por cento) ao mês</strong>, calculados <i>pro rata die</i> (por dia de atraso) sobre o valor da obrigação.</li>
-        </ul>
-        <p><strong>4.2. SIMULAÇÃO DE ATRASO:</strong> A título de exemplo, uma obrigação de <strong>[VALOR_BASE_CALCULO_ATRASO]</strong> que atrase 30 dias, terá seu valor corrigido para aproximadamente <strong>[VALOR_APROX_COM_ATRASO]</strong>, considerando a aplicação da multa e dos juros de mora.</p>
-        <p><strong>4.3. TOLERÂNCIA:</strong> Atrasos são um descumprimento contratual grave. O CREDOR poderá tolerar um atraso máximo de <strong>40 (quarenta) dias</strong> antes de iniciar, a seu exclusivo critério, os procedimentos de cobrança judicial e extrajudicial. A tolerância não significa novação ou renúncia de direitos.</p>
-        <h5>CLÁUSULA 5ª - VENCIMENTO ANTECIPADO DA DÍVIDA</h5>
-        <p><strong>5.1.</strong> A dívida será considerada integralmente vencida, podendo o CREDOR exigir o pagamento imediato da totalidade do saldo devedor, incluindo o Valor Principal e todos os encargos, nas seguintes hipóteses:</p>
-        <ul>
-            <li>(a) Atraso no pagamento de qualquer parcela ou obrigação.</li>
-            <li>(b) Constatação de falsidade em qualquer declaração ou documento apresentado pelo(a) DEVEDOR(A).</li>
-            <li>(c) Protesto de títulos contra o(a) DEVEDOR(A) ou decretação de sua insolvência.</li>
-        </ul>
-        <h5>CLÁUSULA 6ª - GARANTIA E CONSEQUÊNCIAS LEGAIS</h5>
-        <p><strong>6.1. NOTA PROMISSÓRIA:</strong> Este contrato é garantido por uma Nota Promissória emitida pelo(a) DEVEDOR(A) em favor do CREDOR, no valor total da dívida. O(A) DEVEDOR(A) está ciente de que a Nota Promissória é um título de crédito executivo, permitindo ao CREDOR o ajuizamento de Ação de Execução de forma célere em caso de inadimplência.</p>
-        <p><strong>6.2. BOA-FÉ E FRAUDE:</strong> O(A) DEVEDOR(A) declara que celebra este contrato de boa-fé, com a real intenção de cumprir todas as suas obrigações. A contratação do empréstimo com o intuito preexistente de não efetuar o pagamento, utilizando-se de ardil para obter vantagem ilícita, poderá caracterizar o crime de estelionato, previsto no Art. 171 do Código Penal, sujeitando o infrator às sanções legais cabíveis, sem prejuízo da cobrança da dívida.</p>
-        <h5>CLÁUSULA 7ª - ACEITE DIGITAL E VALIDADE JURÍDICA</h5>
-        <p><strong>7.1.</strong> Ao marcar a caixa de seleção "Declaro que li, compreendi e aceito integralmente os termos e condições" e prosseguir com a confirmação eletrônica (via WhatsApp ou outro meio digital), o(a) DEVEDOR(A) manifesta seu consentimento livre, informado e inequívoco, conferindo validade e eficácia jurídica plena a este instrumento, nos termos do art. 10 da Medida Provisória 2.200-2/2001 e do Código Civil brasileiro.</p>
-        <h5>CLÁUSULA 8ª - FORO</h5>
-        <p><strong>8.1.</strong> As partes elegem o foro da comarca de [CIDADE_CONTRATO]/[ESTADO_CONTRATO] para dirimir quaisquer controvérsias oriundas deste contrato, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
-        <p style="text-align: center; margin-top: 20px;">[CIDADE_CONTRATO] - [ESTADO_CONTRATO], [DATA_ORCAMENTO_FORMATADA].</p>
+        <h4>CONTRATO DE MÚTUO FINANCEIRO</h4>
+        <p><strong>Contrato Nº:</strong> [CONTRATO_NUMERO]<br><strong>Data de Celebração:</strong> [DATA_ORCAMENTO_FORMATADA]</p>
+    
+        <h4>PARTES CONTRATANTES:</h4>
+        <p><strong>MUTUANTE (Credor):</strong><br>
+        Nome: [NOME_COMPLETO_DO_CREDOR]<br>
+        CPF/CNPJ: [CPF_CNPJ_DO_CREDOR]<br>
+        Endereço: [ENDERECO_CREDOR]<br>
+        Contato: [TELEFONE_DO_CREDOR]</p>
+    
+        <p><strong>MUTUÁRIO (Devedor):</strong><br>
+        Nome: [NOME_CLIENTE_COMPLETO]<br>
+        CPF: [CPF_CLIENTE]<br>
+        Endereço: [ENDERECO_CLIENTE]</p>
+    
+        <h4>CLÁUSULA PRIMEIRA – DO OBJETO</h4>
+        <p>1.1. O presente contrato tem por objeto o mútuo (empréstimo) da quantia de [VALOR_SOLICITADO_FORMATADO] ([VALOR_SOLICITADO_EXTENSO]), que o MUTUANTE entrega e transfere ao MUTUÁRIO nesta data, em moeda corrente nacional.<br>
+        1.2. O MUTUÁRIO declara ter recebido o valor integral descrito no item 1.1, servindo este instrumento como prova e quitação do ato de entrega do montante.</p>
+    
+        <h4>CLÁUSULA SEGUNDA – DO PAGAMENTO E CONDIÇÕES</h4>
+        <p>2.1. O MUTUÁRIO se compromete a restituir o valor mutuado, acrescido dos encargos financeiros pactuados, totalizando o montante de [VALOR_TOTAL_PAGO_FORMATADO] ([VALOR_TOTAL_PAGO_EXTENSO]).<br>
+        2.2. O pagamento será realizado em [NUMERO_PARCELAS] ([NUMERO_PARCELAS_EXTENSO]) parcelas mensais e consecutivas, no valor de [VALOR_PARCELA_FORMATADO] cada uma.<br>
+        2.3. As datas de vencimento das parcelas serão todo dia [DIA_PAGAMENTO] de cada mês, iniciando-se a primeira em [DATA_PRIMEIRO_VENCIMENTO_PARCELADO] e a última em [DATA_ULTIMO_VENCIMENTO_PARCELADO].</p>
+    
+        <h4>CLÁUSULA TERCEIRA – DA FORMA DE PAGAMENTO</h4>
+        <p>3.1. Os pagamentos deverão ser realizados por um dos seguintes meios, à escolha do MUTUÁRIO:<br>
+        a) PIX: Chave CPF [CPF_CREDOR] ou Chave Celular [TELEFONE_CREDOR], de titularidade do MUTUANTE.<br>
+        b) Depósito ou transferência bancária: A combinar com o MUTUANTE.<br>
+        c) Em espécie: Diretamente ao MUTUANTE, mediante emissão de recibo detalhado no ato do pagamento.<br>
+        3.2. Compete ao MUTUÁRIO a responsabilidade de obter e arquivar os comprovantes de cada pagamento realizado.</p>
+    
+        <h4>CLÁUSULA QUARTA – DO INADIMPLEMENTO E PENALIDADES</h4>
+        <p>4.1. O não pagamento de qualquer parcela na data de seu respectivo vencimento configurará a mora do MUTUÁRIO, independentemente de qualquer aviso ou notificação, sujeitando-o aos seguintes encargos, calculados sobre o valor da parcela em atraso:<br>
+        a) Multa Moratória: Percentual fixo de 20% (vinte por cento).<br>
+        b) Juros de Mora: Taxa de 10% (dez por cento) ao mês, calculados pro rata die.<br>
+        <strong>Exemplo de Cálculo para Atraso de 30 Dias:</strong><br>
+        Parcela: [VALOR_PARCELA_FORMATADO]<br>
+        Multa (20%): [MULTA_EXEMPLO]<br>
+        Juros (10% por 30 dias): [JUROS_EXEMPLO]<br>
+        Total com Atraso: [TOTAL_ATRASO_EXEMPLO]</p>
+    
+        <h4>CLÁUSULA QUINTA – DO VENCIMENTO ANTECIPADO DA DÍVIDA</h4>
+        <p>5.1. Ocorrerá o vencimento antecipado de toda a dívida, tornando-se imediatamente exigível o saldo devedor total, acrescido das penalidades previstas na Cláusula Quarta, nas seguintes hipóteses:<br>
+        a) Atraso no pagamento de qualquer parcela por um período superior a 30 (trinta) dias;<br>
+        b) Se o MUTUÁRIO tiver qualquer título protestado ou for declarado insolvente.<br>
+        5.2. O não exercício pelo MUTUANTE do direito de exigir o vencimento antecipado será considerado mera liberalidade, não constituindo novação ou renúncia de direitos.</p>
+    
+        <h4>CLÁUSULA SEXTA – DAS DISPOSIÇÕES GERAIS</h4>
+        <p>6.1. Este contrato é celebrado em caráter irrevogável e irretratável, obrigando as partes, seus herdeiros e sucessores.<br>
+        6.2. Toda e qualquer comunicação, transação e comprovante trocados entre as partes por meios digitais, como WhatsApp, e-mail ou outros aplicativos de mensagem, são reconhecidos como válidos e poderão ser utilizados como meio de prova para todos os fins de direito.<br>
+        6.3. A eventual tolerância por parte do MUTUANTE quanto ao não cumprimento de qualquer obrigação não implicará renúncia, novação ou alteração das cláusulas aqui pactuadas.</p>
+    
+        <h4>CLÁUSULA SÉTIMA – DO FORO</h4>
+        <p>7.1. Para dirimir quaisquer controvérsias oriundas deste contrato, as partes elegem o foro da Comarca de [CIDADE_CONTRATO], Estado do [ESTADO_CONTRATO], renunciando a qualquer outro, por mais privilegiado que seja.</p>
+    
+        <p><strong>Palotina - PR, [DATA_ORCAMENTO_FORMATADA]</strong></p>
     </template>
 
     <script src="script.js"></script>
